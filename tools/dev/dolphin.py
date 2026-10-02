@@ -168,8 +168,8 @@ class Gdb:
                 self._recv(3)
             except Exception:
                 pass
-            self.buf = b''
             self.running = False
+        self.buf = b''
 
     def resume(self):
         if not self.running:
@@ -188,8 +188,8 @@ class Gdb:
                 k = min(512, n - len(out))
                 self._send('m%x,%x' % (addr + len(out), k))
                 r = self._recv()
-                if not r or r.startswith('E'):
-                    ok = False
+                if len(r) != 2 * k or any(c not in '0123456789abcdefABCDEF' for c in r):
+                    ok = False          # E00, or a stray stop reply left over from the resume
                     break
                 out += bytes.fromhex(r)
             if ok:

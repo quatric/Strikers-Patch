@@ -24,6 +24,7 @@ HOOKS = (
     ('PROBE', 'WPADProbe', 'WPADProbe: SI poller, the pad as a Classic Controller'),
     ('READ', 'WPADRead', 'WPADRead: Classic Controller record from the pad'),
     ('SETFMT', 'WPADSetDataFormat', 'WPADSetDataFormat: accept a format with no Wii Remote'),
+    ('FRAME', 'PadFrame', 'input manager frame update: connect a pad as a Wii Remote'),
 )
 
 
@@ -48,8 +49,22 @@ def compile_hook(name, defs):
     return list(struct.unpack('>%dI' % (len(b) // 4), b))
 
 
+def input_manager(region):
+    """(per-frame update, WPAD connect callback) of the game's input manager.
+
+    The frame update polls only the channels its connect callback has enabled, and nothing enables a channel
+    without a Wii Remote.  Both functions sit at a fixed distance from the first Classic Controller hook site
+    (inside the pad reader that the frame update calls) in every release.
+    """
+    import gen_cc
+    first = gen_cc.parse(os.path.join(HERE, 'cc', region + '.txt'))[0][0]
+    frame = first - 0x6C - 0x5C
+    return frame, frame - 0x188
+
+
 def build(region, dol, ref):
     a = anchors.resolve(ref, dol)
+    a['PadFrame'], connect = input_manager(region)
     defs = {
         'STATE': '0x%08Xu' % STATE,
         'SI_TYPES': '0x%08Xu' % a['SiTypes'],
@@ -59,6 +74,7 @@ def build(region, dol, ref):
         'FN_OSDISABLE': '0x%08Xu' % a['OSDisableInterrupts'],
         'FN_OSRESTORE': '0x%08Xu' % a['OSRestoreInterrupts'],
         'WPAD_TBL': '0x%08Xu' % a['WpadTbl'],
+        'FN_CONNECT': '0x%08Xu' % connect,
     }
     ops, cur = [], GC_BASE
     for name, fn, note in HOOKS:

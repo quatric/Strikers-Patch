@@ -58,6 +58,8 @@ _entry:
     bl      gc_read             /* WPADRead(chan, buf) */
 #elif defined(HOOK_SETFMT)
     bl      gc_setfmt           /* WPADSetDataFormat(chan, fmt) */
+#elif defined(HOOK_FRAME)
+    bl      gc_frame            /* input manager frame update(this) */
 #endif
     stw     3, 0x08(1)          /* did the hook handle the call? */
     RESTORE_ALL

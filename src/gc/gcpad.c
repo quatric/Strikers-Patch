@@ -280,13 +280,16 @@ u32 gc_probe(u32 chan, u32 *type)
     u32 h, l, now;
     u8 *b;
 
-    if (chan > 3 || ST->in_cb)
+    if (chan > 3)
         return 0;
-    poll_all();
+    if (!ST->in_cb)
+        poll_all();
     if (!driven(chan, &h, &l))
         return 0;
     if (type)
         *type = 2;
+    if (ST->in_cb)              /* KPAD's own callback asks too: answer, but do not feed it again */
+        return 1;
 
     /* no Wii Remote at all: nothing will ever deliver a sample, so run KPAD's own sampling callback (the one the
      * WPAD library calls for each incoming report) once a frame; it reads the pad through the READ hook */
@@ -335,3 +338,20 @@ u32 gc_setfmt(u32 chan, u32 fmt)
     return 1;
 }
 #endif
+
+#if defined(HOOK_FRAME)
+/* The input manager's per-frame update (r3 = the manager): it reads only the channels whose "connected" flag its
+ * WPAD connect callback sets, and no Wii Remote means no callback.  Run the callback ourselves for every port a pad
+ * answers on, and keep the SI poller going from here, since nothing else polls the pads. */
+u32 gc_frame(u8 *self)
+{
+    u32 c, h, l;
+
+    poll_all();
+    for (c = 0; c < 4; c++)
+        if (!self[0x2F0 + c] && driven(c, &h, &l))
+            ((void (*)(u32, u32))FN_CONNECT)(c, 0);
+    return 0;
+}
+#endif
+
