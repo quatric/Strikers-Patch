@@ -14,36 +14,17 @@ ORDER = ('cc', 'gc')
 def detect_region(dol, disc_id=None):
     """Which release this main.dol is, from its own bytes (None if unknown).
 
-    The two European discs have the same id and version, so the DOL size picks the release and the retail
-    (or already patched) bytes at every site confirm it.
+    The two European discs share an id and version, so the retail size picks the release (a patched DOL is
+    larger) and the bytes at every site then have to be the retail ones or this tool's own patch.
     """
     for region, info in REGIONS.items():
         if disc_id and info['disc_id'] != disc_id:
             continue
         if len(dol.data) < info['dol_size']:
             continue
-        ok = False
-        for name in ORDER:
-            if features.available(name, region):
-                f = features.load(name, region)
-                if f.is_applied(dol) or not f.check_pristine(dol):
-                    ok = True
-                    break
-        # a patched DOL grows (the injected section is appended), so only require the retail prefix to match
-        if ok and dol_is_release(dol, region):
+        if all(v != 'mismatch' for v in status(dol, region).values()):
             return region
     return None
-
-
-def dol_is_release(dol, region):
-    """True if every site of every feature holds either the retail bytes or this feature's own patch."""
-    for name in ORDER:
-        if not features.available(name, region):
-            continue
-        f = features.load(name, region)
-        if f.check_pristine(dol) and not f.is_applied(dol):
-            return False
-    return True
 
 
 def status(dol, region):

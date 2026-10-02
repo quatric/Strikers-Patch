@@ -14,7 +14,11 @@ from ops import Feature, Hook
 
 
 def parse(path):
-    lines = [l.split() for l in open(path).read().splitlines()[1:] if l.strip()]
+    return parse_text(open(path).read(), path)
+
+
+def parse_text(text, path='<text>'):
+    lines = [l.split() for l in text.splitlines()[1:] if l.strip()]
     out, i = [], 0
     while i < len(lines):
         head, n = lines[i]
