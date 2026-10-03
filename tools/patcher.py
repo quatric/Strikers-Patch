@@ -18,7 +18,7 @@ def detect_region(dol, disc_id=None):
     larger) and the bytes at every site then have to be the retail ones or this tool's own patch.
     """
     for region, info in REGIONS.items():
-        if disc_id and info['disc_id'] != disc_id:
+        if disc_id and info['disc_id'][:4] != disc_id[:4]:
             continue
         if len(dol.data) < info['dol_size']:
             continue

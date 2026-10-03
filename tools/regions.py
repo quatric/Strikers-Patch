@@ -16,4 +16,4 @@ REGIONS = {
 
 def for_disc(disc_id):
     """Regions that share a disc id (two for the European release)."""
-    return [r for r, v in REGIONS.items() if v['disc_id'] == disc_id]
+    return [r for r, v in REGIONS.items() if v['disc_id'][:4] == disc_id[:4]]
