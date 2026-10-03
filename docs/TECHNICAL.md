@@ -66,7 +66,9 @@ addresses found by masked-signature search in `tools/anchors.py`.
 
 Because the pad is fed to the game as a Classic Controller, everything downstream
 (buttons, sticks, pointer) is Vague Rant's code, which keeps the two inputs
-identical. L + R + Start produces HOME.
+identical except for the GameCube shoulder mapping: Z maps to Classic L (swap
+items), and L maps to Classic ZL (modify shots). The physical L + R + Start
+combination produces HOME.
 
 ## Layout of the injected section
 

@@ -35,16 +35,17 @@ Wii.** The Korean release is not covered (no dump was available).
 
 ### GameCube controller
 
-The pad is presented to the game as a Classic Controller, so it follows Vague
-Rant's Classic mapping.
+The pad is presented to the game as a Classic Controller. Z swaps items and L
+modifies shots, using Vague Rant's Classic mapping with L and ZL swapped.
 
 | GameCube | Classic Controller |
 | --- | --- |
 | Control stick | Left stick |
 | C-stick | Right stick |
 | A / B / X / Y | A / B / X / Y |
-| Z | ZL |
-| L / R | L / R |
+| Z | L |
+| L | ZL |
+| R | R |
 | Start | + |
 | D-pad | D-pad |
 | L + R + Start | HOME |

@@ -206,15 +206,15 @@ static __attribute__((noinline)) u32 cc_buttons(u32 h)
     if (h & 0x04000000u) b |= CL_X;
     if (h & 0x08000000u) b |= CL_Y;
     if (h & 0x10000000u) b |= CL_PLUS;
-    if (h & 0x00100000u) b |= CL_ZL;            /* Z */
-    if (h & 0x00400000u) b |= CL_L;
+    if (h & 0x00100000u) b |= CL_L;             /* Z: swap items */
+    if (h & 0x00400000u) b |= CL_ZL;            /* L: modify shots */
     if (h & 0x00200000u) b |= CL_R;
     if (h & 0x00080000u) b |= CL_UP;
     if (h & 0x00040000u) b |= CL_DOWN;
     if (h & 0x00020000u) b |= CL_RIGHT;
     if (h & 0x00010000u) b |= CL_LEFT;
-    if ((b & (CL_L | CL_R | CL_PLUS)) == (CL_L | CL_R | CL_PLUS))
-        b = (b & ~(CL_L | CL_R | CL_PLUS)) | CL_HOME;
+    if ((h & 0x10600000u) == 0x10600000u)       /* physical L + R + Start */
+        b = (b & ~(CL_ZL | CL_R | CL_PLUS)) | CL_HOME;
     return b;
 }
 
@@ -354,4 +354,3 @@ u32 gc_frame(u8 *self)
     return 0;
 }
 #endif
-
