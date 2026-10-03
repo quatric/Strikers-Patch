@@ -152,9 +152,9 @@ static inline int pad_in(u32 chan, u32 *h, u32 *l)
 /* does this channel hold a real extension (Nunchuk or Classic Controller) that must win over the pad? */
 static inline int real_ext(u8 *b)
 {
-    u32 t = b[0x8C1];
+    u32 t = b[0x8C1 - WPAD_SHIFT];
 
-    return *(s32 *)(b + 0x8BC) != -1 && (t == 1 || t == 2);
+    return *(s32 *)(b + (0x8BC - WPAD_SHIFT)) != -1 && (t == 1 || t == 2);
 }
 
 static inline int driven(u32 chan, u32 *h, u32 *l)
@@ -294,8 +294,8 @@ u32 gc_probe(u32 chan, u32 *type)
     /* no Wii Remote at all: nothing will ever deliver a sample, so run KPAD's own sampling callback (the one the
      * WPAD library calls for each incoming report) once a frame; it reads the pad through the READ hook */
     b = wpd(chan);
-    if (*(s32 *)(b + 0x8BC) == -1) {
-        void (*cb)(u32) = *(void (**)(u32))(b + 0x8A8);
+    if (*(s32 *)(b + (0x8BC - WPAD_SHIFT)) == -1) {
+        void (*cb)(u32) = *(void (**)(u32))(b + (0x8A8 - WPAD_SHIFT));
 
         now = tb();
         if (cb && now - ST->feed_tb[chan] >= TB_FEED) {
@@ -332,9 +332,9 @@ u32 gc_setfmt(u32 chan, u32 fmt)
     if (!driven(chan, &h, &l))
         return 0;
     b = wpd(chan);
-    if (*(s32 *)(b + 0x8BC) != -1)
+    if (*(s32 *)(b + (0x8BC - WPAD_SHIFT)) != -1)
         return 0;
-    *(u32 *)(b + 0x8B8) = fmt;
+    *(u32 *)(b + (0x8B8 - WPAD_SHIFT)) = fmt;
     return 1;
 }
 #endif

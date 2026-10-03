@@ -74,6 +74,7 @@ def build(region, dol, ref):
         'FN_OSDISABLE': '0x%08Xu' % a['OSDisableInterrupts'],
         'FN_OSRESTORE': '0x%08Xu' % a['OSRestoreInterrupts'],
         'WPAD_TBL': '0x%08Xu' % a['WpadTbl'],
+        'WPAD_SHIFT': '0x%Xu' % a['WpadShift'],
         'FN_CONNECT': '0x%08Xu' % connect,
     }
     ops, cur = [], GC_BASE

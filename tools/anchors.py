@@ -102,6 +102,15 @@ def resolve(ref, tgt):
     assert r['SiBusy'] == r['SiTypes'] - 0x18, 'SI busy flag moved relative to the type table'
     assert f.pair(0x803C0C6C, 0x8054A738) == r['SiBusy'], 'SIGetType and SITransfer disagree on the busy flag'
     r['SiShadow'] = r['SiBusy'] + 4
+    # the WPAD control block is 0xC0 bytes smaller in the European SDK build: every field this code touches moves by
+    # the same amount.  WPADSetConnectCallback is the first `lwz r31,N(r4); stw r30,N(r4)` after WPADProbe
+    code = words(tgt, r['WPADProbe'], 0x400)
+    for i in range(len(code) - 1):
+        if code[i] >> 16 == 0x83E4 and code[i + 1] == (0x93C40000 | (code[i] & 0xFFFF)):
+            r['WpadShift'] = 0x8A8 - (code[i] & 0xFFFF)
+            break
+    else:
+        raise AssertionError('WPADSetConnectCallback not found')
     body = words(tgt, r['SIGetType'], 80)
     assert any(w >> 26 == 32 and simm(w) == 4 for w in body), 'SIPOLL shadow not read at busy+4'
     return r

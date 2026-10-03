@@ -16,10 +16,12 @@ Dolphin. Nothing from the game is included in this repository.
 Tested **only in Dolphin**, with scripted pad input. **Not tested on a real
 Wii.** The Korean release is not covered (no dump was available).
 
-- GameCube controller: all four ports, no Wii Remote needed. Buttons, the
-  control stick and the C-stick reach the game the same way a Classic Controller
-  does. Verified in Dolphin on the USA release; the other releases are checked
-  in the same way (see `tools/dev/`).
+- GameCube controller: no Wii Remote needed. Buttons and the control stick
+  reach the game the same way a Classic Controller does. Verified in Dolphin
+  (port 1) on the USA, both European and the Japanese release; the other ports
+  use the same code but were not individually tested (see `tools/dev/`).
+- Patched disc images were checked by extracting the result and comparing its
+  `main.dol` with the directly patched one.
 - Classic Controller: Vague Rant's codes, unchanged, in the same three formats.
 
 **Known limits**
